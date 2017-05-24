@@ -9,5 +9,5 @@ Homepage: http://www.deepin.org
 Package: dde-file-manager-integration
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
- libdde-file-manager( =${binary:Version})
+ libdde-file-manager
 Description: Deepin File manager plugin integration
