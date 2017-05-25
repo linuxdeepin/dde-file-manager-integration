@@ -6,6 +6,8 @@ TEMPLATE = lib
 CONFIG += plugin link_pkgconfig
 PKGCONFIG += dde-file-manager
 
+DESTDIR = $$_PRO_FILE_PWD_/../views
+
 OTHER_FILES += webview.json
 
 HEADERS += \

@@ -28,9 +28,13 @@ public:
 
 private slots:
     void notifyUrlChanged();
+    void openLinkInNewTab(const DUrl &url);
 
 private:
     bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+
+    QWebView *createWindow(QWebPage::WebWindowType type) Q_DECL_OVERRIDE;
+    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // DFMWEBVIEWPLUGIN_H
