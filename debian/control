@@ -11,3 +11,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
  libdde-file-manager
 Description: Deepin File manager plugin integration
+ Include the following plugins:
+ 1: Browse the web page plugin.
+ 2: View the files in the system clipboard.
+ 3: Marks the file synchronization status of nutstore.
