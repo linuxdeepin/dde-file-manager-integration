@@ -7,4 +7,4 @@
 TARGET = dde-file-manager-integration
 TEMPLATE = subdirs
 
-SUBDIRS += webview clipboard-files nutstore-dfm-plugin
+SUBDIRS += webview clipboard-files nutstore-dfm-plugin thumbnail

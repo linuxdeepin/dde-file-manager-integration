@@ -1,0 +1,4 @@
+{
+    "Keys": [ "ttf", "ttc", "otf" ],
+    "MimeTypes": [ "application/x-font-ttf", "application/x-font-ttx", "application/x-font-otf" ]
+}
