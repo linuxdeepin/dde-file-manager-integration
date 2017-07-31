@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QVariant>
 #include <QFile>
+#include <QFontDatabase>
 #include <QDebug>
 
 #define DEFAULT_SIZE 256
@@ -72,29 +73,45 @@ bool FontImageIOHandler::read(QImage *image)
     if (device()->atEnd())
         return false;
 
-    if (QFile *file = qobject_cast<QFile*>(device())) {
-        int count;
-        FcPattern *pattern = FcFreeTypeQuery((const FcChar8 *)QFile::encodeName(file->fileName()).constData(), 0, FcConfigGetBlanks(0), &count);
+    QFile *file = qobject_cast<QFile*>(device());
 
-        if (!pattern)
-            return false;
-
-        FcChar8 *fam = 0;
-        if (FcPatternGetString(pattern, FC_FAMILY, 0, &fam) == FcResultMatch) {
-            m_fontFamily = QString::fromUtf8(reinterpret_cast<const char *>(fam));
-        }
-
-        int weight_value;
-        if (FcPatternGetInteger(pattern, FC_WEIGHT, 0, &weight_value) != FcResultMatch)
-            weight_value = FC_WEIGHT_REGULAR;
-
-        m_fontWeight = weightFromFcWeight(weight_value);
-    } else {
+    if (!file)
         return false;
+
+    int count;
+    FcPattern *pattern = FcFreeTypeQuery((const FcChar8 *)QFile::encodeName(file->fileName()).constData(), 0, FcConfigGetBlanks(0), &count);
+
+    if (!pattern)
+        return false;
+
+    FcChar8 *fam = 0;
+    if (FcPatternGetString(pattern, FC_FAMILY, 0, &fam) == FcResultMatch) {
+        m_fontFamily = QString::fromUtf8(reinterpret_cast<const char *>(fam));
     }
 
     if (m_fontFamily.isEmpty())
         return false;
+
+    int weight_value;
+    if (FcPatternGetInteger(pattern, FC_WEIGHT, 0, &weight_value) != FcResultMatch)
+        weight_value = FC_WEIGHT_REGULAR;
+
+    m_fontWeight = weightFromFcWeight(weight_value);
+
+    QFontDatabase fdb;
+
+    if (!fdb.hasFamily(m_fontFamily)) {
+        fdb.addApplicationFont(file->fileName());
+    }
+
+    QFont font = fdb.font(m_fontFamily, QString(), 12);
+
+    if (font.family() != m_fontFamily) {
+        return false;
+    }
+
+    font.setPixelSize(image->width() / 8);
+    font.setWeight(m_fontWeight);
 
     QSize size(DEFAULT_SIZE, DEFAULT_SIZE);
 
@@ -106,10 +123,7 @@ bool FontImageIOHandler::read(QImage *image)
     image->fill(m_backgroundColor);
 
     QPainter pa(image);
-    QFont font(m_fontFamily);
 
-    font.setPixelSize(image->width() / 8);
-    font.setWeight(m_fontWeight);
     pa.setFont(font);
     pa.drawText(QRect(QPoint(0, 0), image->size()), Qt::AlignCenter,
                 QString::fromUtf8("deepin\nDEEPIN\n深度操作系统\n\\\\\\zccrs///"));
